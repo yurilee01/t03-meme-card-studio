@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>짤·카드 스튜디오</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           왼쪽 설정 영역
+        ========================= */
+
+        .sidebar {
+            width: 360px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .section {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:first-of-type {
+            padding-top: 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        /* 이미지 업로드 */
+
+        .upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafafa;
+            display: block;
+        }
+
+        .upload-box:hover {
+            background: #f0f0f0;
+        }
+
+        .upload-box input {
+            display: none;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 문구 */
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .text-input:focus {
+            border-color: #4d7cff;
+        }
+
+        /* 슬라이더 */
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #1677ff;
+            cursor: pointer;
+        }
+
+        .value {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 색상 */
+
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="color"] {
+            width: 58px;
+            height: 40px;
+            padding: 3px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        /* 이미지 비율 */
+
+        .ratio-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ratio-btn {
+            border: none;
+            background: #222;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .ratio-btn.active {
+            background: #ff4f83;
+        }
+
+        .ratio-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* 템플릿 */
+
+        .template-input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .template-save {
+            width: 100%;
+            border: none;
+            background: #4d7cff;
+            color: white;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .template-save:hover {
+            background: #3d69e5;
+        }
+
+        .template-list {
+            margin-top: 15px;
+        }
+
+        .template-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f7f7f7;
+            border-radius: 7px;
+            margin-bottom: 7px;
+        }
+
+        .template-name {
+            cursor: pointer;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .delete-btn {
+            border: none;
+            background: transparent;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            color: #f00;
+        }
+
+        /* JSON 버튼 */
+
+        .json-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .json-btn {
+            flex: 1;
+            border: none;
+            color: white;
+            padding: 11px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .json-export {
+            background: #333;
+        }
+
+        .json-import {
+            background: #666;
+            text-align: center;
+        }
+
+        .json-import input {
+            display: none;
+        }
+
+        /* 다운로드 */
+
+        .download-btn {
+            width: 100%;
+            border: none;
+            background: #ff4f83;
+            color: white;
+            padding: 15px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            background: #f33d73;
+        }
+
+        .notice {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        /* =========================
+           오른쪽 미리보기
+        ========================= */
+
+        .preview-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 50px;
+            background: #eee;
+        }
+
+        .preview-wrapper {
+            width: min(700px, 90%);
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .preview {
+            position: relative;
+            width: 100%;
+            background: #ddd;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .preview.ratio-1-1 {
+            aspect-ratio: 1 / 1;
+        }
+
+        .preview.ratio-4-5 {
+            aspect-ratio: 4 / 5;
+        }
+
+        .preview.ratio-16-9 {
+            aspect-ratio: 16 / 9;
+        }
+
+        #previewImage {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            left: 0;
+            top: 0;
+        }
+
+        #previewText {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.35);
+            user-select: none;
+            max-width: 95%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .empty-message {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #777;
+            font-size: 18px;
+        }
+
+        /* 현재 비율 표시 */
+
+        .ratio-display {
+            margin-top: 10px;
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .preview-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         왼쪽 설정
+    ========================= -->
+
+    <aside class="sidebar">
+
+        <div class="title">
+            🎨 짤·카드 스튜디오
+        </div>
+
+        <!-- 이미지 업로드 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                🖼 이미지 업로드
+            </div>
+
+            <label class="upload-box">
+
+                <input
+                    type="file"
+                    id="imageUpload"
+                    accept="image/png,image/jpeg,.png,.jpg,.jpeg"
+                >
+
+                <div class="upload-text">
+                    PNG / JPG 이미지를 선택하세요
+                </div>
+
+            </label>
+
+            <div class="notice">
+                PNG와 JPEG/JPG 파일만 사용할 수 있습니다.
+            </div>
+
+        </div>
+
+
+        <!-- 문구 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                ✏️ 문구
+            </div>
+
+            <input
+                type="text"
+                id="textInput"
+                class="text-input"
+                value="텍스트 미리보기"
+                placeholder="문구를 입력하세요"
+                maxlength="200"
+            >
+
+        </div>
+
+
+        <!-- 가로 위치 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                가로 위치
+            </div>
+
+            <input
+                type="range"
+                id="xPosition"
+                min="0"
+                max="100"
+                value="50"
+            >
+
+            <div class="value">
+                X: <span id="xValue">50</span>%
+            </div>
+
+        </div>
+
+
+        <!-- 세로 위치 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                세로 위치
+            </div>
+
+            <input
+                type="range"
+                id="yPosition"
+                min="0"
+                max="100"
+                value="50"
+            >
+
+            <div class="value">
+                Y: <span id="yValue">50</span>%
+            </div>
+
+        </div>
+
+
+        <!-- 글자 크기 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                글자 크기
+            </div>
+
+            <input
+                type="range"
+                id="fontSize"
+                min="10"
+                max="120"
+                value="50"
+            >
+
+            <div class="value">
+                크기: <span id="fontSizeValue">50</span>px
+            </div>
+
+        </div>
+
+
+        <!-- 글자 색상 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                글자 색상
+            </div>
+
+            <div class="color-row">
+
+                <input
+                    type="color"
+                    id="textColor"
+                    value="#ffffff"
+                >
+
+                <span id="colorValue">
+                    #ffffff
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- 이미지 비율 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                📐 이미지 비율
+            </div>
+
+            <div class="ratio-buttons">
+
+                <button
+                    class="ratio-btn active"
+                    data-ratio="1:1"
+                    type="button"
+                >
+                    1:1
+                </button>
+
+                <button
+                    class="ratio-btn"
+                    data-ratio="4:5"
+                    type="button"
+                >
+                    4:5
+                </button>
+
+                <button
+                    class="ratio-btn"
+                    data-ratio="16:9"
+                    type="button"
+                >
+                    16:9
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- 템플릿 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                💾 템플릿 저장
+            </div>
+
+            <input
+                type="text"
+                id="templateName"
+                class="template-input"
+                placeholder="템플릿 이름"
+                maxlength="50"
+            >
+
+            <button
+                class="template-save"
+                id="saveTemplate"
+                type="button"
+            >
+                💾 템플릿 저장
+            </button>
+
+            <div class="notice">
+                같은 이름으로 저장하면 기존 템플릿이 수정됩니다.
+            </div>
+
+
+            <!-- JSON -->
+
+            <div class="json-buttons">
+
+                <button
+                    class="json-btn json-export"
+                    id="exportJson"
+                    type="button"
+                >
+                    JSON 내보내기
+                </button>
+
+                <label class="json-btn json-import">
+                    JSON 복원
+
+                    <input
+                        type="file"
+                        id="jsonImport"
+                        accept=".json,application/json"
+                    >
+
+                </label>
+
+            </div>
+
+
+            <div
+                class="template-list"
+                id="templateList"
+            >
+            </div>
+
+        </div>
+
+
+        <!-- 다운로드 -->
+
+        <button
+            class="download-btn"
+            id="downloadBtn"
+            type="button"
+        >
+            ⬇️ PNG 다운로드
+        </button>
+
+    </aside>
+
+
+    <!-- =========================
+         오른쪽 미리보기
+    ========================= -->
+
+    <main class="preview-area">
+
+        <div class="preview-wrapper">
+
+            <div class="preview-title">
+                미리보기
+            </div>
+
+            <div
+                class="preview ratio-1-1"
+                id="preview"
+            >
+
+                <img
+                    id="previewImage"
+                    src=""
+                    alt="업로드한 이미지 미리보기"
+                    style="display:none;"
+                >
+
+                <div
+                    class="empty-message"
+                    id="emptyMessage"
+                >
+                    이미지를 업로드해주세요
+                </div>
+
+                <div id="previewText">
+                    텍스트 미리보기
+                </div>
+
+            </div>
+
+            <div class="ratio-display">
+                현재 화면비:
+                <strong id="currentRatio">
+                    1:1
+                </strong>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       요소 가져오기
+    ========================= */
+
+    const imageUpload =
+        document.getElementById("imageUpload");
+
+    const previewImage =
+        document.getElementById("previewImage");
+
+    const emptyMessage =
+        document.getElementById("emptyMessage");
+
+    const textInput =
+        document.getElementById("textInput");
+
+    const previewText =
+        document.getElementById("previewText");
+
+    const xPosition =
+        document.getElementById("xPosition");
+
+    const yPosition =
+        document.getElementById("yPosition");
+
+    const xValue =
+        document.getElementById("xValue");
+
+    const yValue =
+        document.getElementById("yValue");
+
+    const fontSize =
+        document.getElementById("fontSize");
+
+    const fontSizeValue =
+        document.getElementById("fontSizeValue");
+
+    const textColor =
+        document.getElementById("textColor");
+
+    const colorValue =
+        document.getElementById("colorValue");
+
+    const preview =
+        document.getElementById("preview");
+
+    const currentRatio =
+        document.getElementById("currentRatio");
+
+    const ratioButtons =
+        document.querySelectorAll(".ratio-btn");
+
+    const templateName =
+        document.getElementById("templateName");
+
+    const saveTemplate =
+        document.getElementById("saveTemplate");
+
+    const templateList =
+        document.getElementById("templateList");
+
+    const downloadBtn =
+        document.getElementById("downloadBtn");
+
+    const exportJson =
+        document.getElementById("exportJson");
+
+    const jsonImport =
+        document.getElementById("jsonImport");
+
+
+    /* =========================
+       현재 설정값
+    ========================= */
+
+    let currentImage = null;
+
+    let settings = {
+
+        text: "텍스트 미리보기",
+
+        x: 50,
+
+        y: 50,
+
+        fontSize: 50,
+
+        color: "#ffffff",
+
+        ratio: "1:1"
+
+    };
+
+
+    /* =========================
+       이미지 업로드
+    ========================= */
+
+    imageUpload.addEventListener(
+        "change",
+        function(event) {
+
+            const file =
+                event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            const allowedTypes = [
+                "image/png",
+                "image/jpeg"
+            ];
+
+            const allowedExtensions = [
+                "png",
+                "jpg",
+                "jpeg"
+            ];
+
+
+            const extension =
+                file.name.includes(".")
+                    ? file.name
+                        .split(".")
+                        .pop()
+                        .toLowerCase()
+                    : "";
+
+
+            /*
+             * MIME 타입과 확장자를
+             * 모두 확인합니다.
+             */
+
+            if (
+                !allowedTypes.includes(file.type) ||
+                !allowedExtensions.includes(extension)
+            ) {
+
+                alert(
+                    "지원하지 않는 파일입니다.\nPNG 또는 JPG/JPEG 이미지만 업로드할 수 있습니다."
+                );
+
+                /*
+                 * 기존 이미지와 작업은
+                 * 그대로 유지합니다.
+                 */
+
+                imageUpload.value = "";
+
+                return;
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onerror =
+                function() {
+
+                    alert(
+                        "이미지를 읽는 중 오류가 발생했습니다."
+                    );
+
+                    imageUpload.value = "";
+
+                };
+
+
+            reader.onload =
+                function(e) {
+
+                    currentImage =
+                        e.target.result;
+
+                    previewImage.src =
+                        currentImage;
+
+                    previewImage.style.display =
+                        "block";
+
+                    emptyMessage.style.display =
+                        "none";
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+
+    /* =========================
+       문구 변경
+    ========================= */
+
+    textInput.addEventListener(
+        "input",
+        function() {
+
+            settings.text =
+                textInput.value;
+
+            previewText.textContent =
+                textInput.value;
+
+        }
+    );
+
+
+    /* =========================
+       가로 위치
+    ========================= */
+
+    xPosition.addEventListener(
+        "input",
+        function() {
+
+            settings.x =
+                Number(xPosition.value);
+
+            xValue.textContent =
+                settings.x;
+
+            updateTextPosition();
+
+        }
+    );
+
+
+    /* =========================
+       세로 위치
+    ========================= */
+
+    yPosition.addEventListener(
+        "input",
+        function() {
+
+            settings.y =
+                Number(yPosition.value);
+
+            yValue.textContent =
+                settings.y;
+
+            updateTextPosition();
+
+        }
+    );
+
+
+    /* =========================
+       글자 크기
+    ========================= */
+
+    fontSize.addEventListener(
+        "input",
+        function() {
+
+            settings.fontSize =
+                Number(fontSize.value);
+
+            fontSizeValue.textContent =
+                settings.fontSize;
+
+            updateTextStyle();
+
+        }
+    );
+
+
+    /* =========================
+       글자 색상
+    ========================= */
+
+    textColor.addEventListener(
+        "input",
+        function() {
+
+            settings.color =
+                textColor.value;
+
+            colorValue.textContent =
+                settings.color;
+
+            updateTextStyle();
+
+        }
+    );
+
+
+    /* =========================
+       텍스트 위치 적용
+    ========================= */
+
+    function updateTextPosition() {
+
+        previewText.style.left =
+            settings.x + "%";
+
+        previewText.style.top =
+            settings.y + "%";
+
+    }
+
+
+    /* =========================
+       텍스트 스타일 적용
+    ========================= */
+
+    function updateTextStyle() {
+
+        previewText.style.fontSize =
+            settings.fontSize + "px";
+
+        previewText.style.color =
+            settings.color;
+
+    }
+
+
+    /* =========================
+       이미지 비율 변경
+    ========================= */
+
+    ratioButtons.forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    ratioButtons.forEach(
+                        function(btn) {
+
+                            btn.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    const ratio =
+                        button.dataset.ratio;
+
+
+                    settings.ratio =
+                        ratio;
+
+
+                    preview.classList.remove(
+                        "ratio-1-1",
+                        "ratio-4-5",
+                        "ratio-16-9"
+                    );
+
+
+                    if (ratio === "1:1") {
+
+                        preview.classList.add(
+                            "ratio-1-1"
+                        );
+
+                    }
+
+
+                    if (ratio === "4:5") {
+
+                        preview.classList.add(
+                            "ratio-4-5"
+                        );
+
+                    }
+
+
+                    if (ratio === "16:9") {
+
+                        preview.classList.add(
+                            "ratio-16-9"
+                        );
+
+                    }
+
+
+                    currentRatio.textContent =
+                        ratio;
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================
+       템플릿 저장
+    ========================= */
+
+    saveTemplate.addEventListener(
+        "click",
+        function() {
+
+            const name =
+                templateName.value.trim();
+
+
+            if (!name) {
+
+                alert(
+                    "템플릿 이름을 입력해주세요."
+                );
+
+                templateName.focus();
+
+                return;
+            }
+
+
+            let templates =
+                getTemplates();
+
+
+            templates[name] = {
+
+                text: settings.text,
+
+                x: settings.x,
+
+                y: settings.y,
+
+                fontSize: settings.fontSize,
+
+                color: settings.color,
+
+                ratio: settings.ratio
+
+            };
+
+
+            saveTemplates(
+                templates
+            );
+
+
+            renderTemplates();
+
+
+            alert(
+                `"${name}" 템플릿이 저장되었습니다.`
+            );
+
+        }
+    );
+
+
+    /* =========================
+       템플릿 데이터 가져오기
+    ========================= */
+
+    function getTemplates() {
+
+        try {
+
+            return JSON.parse(
+                localStorage.getItem(
+                    "myTemplates"
+                ) || "{}"
+            );
+
+        } catch (error) {
+
+            return {};
+
+        }
+
+    }
+
+
+    /* =========================
+       템플릿 데이터 저장
+    ========================= */
+
+    function saveTemplates(
+        templates
+    ) {
+
+        localStorage.setItem(
+            "myTemplates",
+            JSON.stringify(templates)
+        );
+
+    }
+
+
+    /* =========================
+       템플릿 목록 표시
+    ========================= */
+
+    function renderTemplates() {
+
+        templateList.innerHTML = "";
+
+
+        const templates =
+            getTemplates();
+
+
+        const names =
+            Object.keys(templates);
+
+
+        if (names.length === 0) {
+
+            templateList.innerHTML =
+                '<div class="notice">저장된 템플릿이 없습니다.</div>';
+
+            return;
+
+        }
+
+
+        names.forEach(
+            function(name) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "template-item";
+
+
+                const nameElement =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                nameElement.className =
+                    "template-name";
+
+
+                nameElement.textContent =
+                    name;
+
+
+                nameElement.title =
+                    "클릭해서 불러오기";
+
+
+                nameElement.addEventListener(
+                    "click",
+                    function() {
+
+                        loadTemplate(name);
+
+                    }
+                );
+
+
+                const deleteButton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                deleteButton.className =
+                    "delete-btn";
+
+
+                deleteButton.textContent =
+                    "🗑 삭제";
+
+
+                deleteButton.type =
+                    "button";
+
+
+                deleteButton.addEventListener(
+                    "click",
+                    function() {
+
+                        deleteTemplate(name);
+
+                    }
+                );
+
+
+                item.appendChild(
+                    nameElement
+                );
+
+                item.appendChild(
+                    deleteButton
+                );
+
+
+                templateList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       템플릿 불러오기
+    ========================= */
+
+    function loadTemplate(name) {
+
+        const templates =
+            getTemplates();
+
+
+        const template =
+            templates[name];
+
+
+        if (!template) {
+
+            alert(
+                "템플릿을 찾을 수 없습니다."
+            );
+
+            return;
+
+        }
+
+
+        settings = {
+
+            text:
+                typeof template.text === "string"
+                    ? template.text
+                    : "",
+
+            x:
+                Number.isFinite(
+                    Number(template.x)
+                )
+                    ? Number(template.x)
+                    : 50,
+
+            y:
+                Number.isFinite(
+                    Number(template.y)
+                )
+                    ? Number(template.y)
+                    : 50,
+
+            fontSize:
+                Number.isFinite(
+                    Number(template.fontSize)
+                )
+                    ? Number(template.fontSize)
+                    : 50,
+
+            color:
+                /^#[0-9a-fA-F]{6}$/.test(
+                    template.color
+                )
+                    ? template.color
+                    : "#ffffff",
+
+            ratio:
+                [
+                    "1:1",
+                    "4:5",
+                    "16:9"
+                ].includes(
+                    template.ratio
+                )
+                    ? template.ratio
+                    : "1:1"
+
+        };
+
+
+        /* 문구 */
+
+        textInput.value =
+            settings.text;
+
+        previewText.textContent =
+            settings.text;
+
+
+        /* 위치 */
+
+        xPosition.value =
+            settings.x;
+
+        xValue.textContent =
+            settings.x;
+
+
+        yPosition.value =
+            settings.y;
+
+        yValue.textContent =
+            settings.y;
+
+
+        /* 크기 */
+
+        fontSize.value =
+            settings.fontSize;
+
+        fontSizeValue.textContent =
+            settings.fontSize;
+
+
+        /* 색상 */
+
+        textColor.value =
+            settings.color;
+
+        colorValue.textContent =
+            settings.color;
+
+
+        /* 비율 */
+
+        preview.classList.remove(
+            "ratio-1-1",
+            "ratio-4-5",
+            "ratio-16-9"
+        );
+
+
+        if (settings.ratio === "1:1") {
+
+            preview.classList.add(
+                "ratio-1-1"
+            );
+
+        }
+
+
+        if (settings.ratio === "4:5") {
+
+            preview.classList.add(
+                "ratio-4-5"
+            );
+
+        }
+
+
+        if (settings.ratio === "16:9") {
+
+            preview.classList.add(
+                "ratio-16-9"
+            );
+
+        }
+
+
+        currentRatio.textContent =
+            settings.ratio;
+
+
+        ratioButtons.forEach(
+            function(button) {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.ratio ===
+                    settings.ratio
+                );
+
+            }
+        );
+
+
+        updateTextPosition();
+
+        updateTextStyle();
+
+
+        templateName.value =
+            name;
+
+    }
+
+
+    /* =========================
+       템플릿 삭제
+    ========================= */
+
+    function deleteTemplate(name) {
+
+        const templates =
+            getTemplates();
+
+
+        if (
+            !confirm(
+                `"${name}" 템플릿을 삭제할까요?`
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        delete templates[name];
+
+
+        saveTemplates(
+            templates
+        );
+
+
+        renderTemplates();
+
+
+        if (
+            templateName.value.trim() === name
+        ) {
+
+            templateName.value = "";
+
+        }
+
+    }
+
+
+    /* =========================
+       JSON 내보내기
+    ========================= */
+
+    exportJson.addEventListener(
+        "click",
+        function() {
+
+            const templates =
+                getTemplates();
+
+
+            const data = {
+
+                version: 1,
+
+                exportedAt:
+                    new Date().toISOString(),
+
+                currentSettings:
+                    settings,
+
+                templates:
+                    templates
+
+            };
+
+
+            const blob =
+                new Blob(
+                    [
+                        JSON.stringify(
+                            data,
+                            null,
+                            2
+                        )
+                    ],
+                    {
+                        type:
+                            "application/json"
+                    }
+                );
+
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.download =
+                "card-studio-backup.json";
+
+
+            link.href =
+                url;
+
+
+            document.body.appendChild(
+                link
+            );
+
+
+            link.click();
+
+
+            link.remove();
+
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        }
+    );
+
+
+    /* =========================
+       JSON 복원
+    ========================= */
+
+    jsonImport.addEventListener(
+        "change",
+        function(event) {
+
+            const file =
+                event.target.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onerror =
+                function() {
+
+                    alert(
+                        "JSON 파일을 읽을 수 없습니다."
+                    );
+
+                    jsonImport.value = "";
+
+                };
+
+
+            reader.onload =
+                function(e) {
+
+                    try {
+
+                        const data =
+                            JSON.parse(
+                                e.target.result
+                            );
+
+
+                        if (
+                            !data ||
+                            typeof data !==
+                                "object" ||
+                            typeof data.templates !==
+                                "object"
+                        ) {
+
+                            throw new Error(
+                                "invalid"
+                            );
+
+                        }
+
+
+                        saveTemplates(
+                            data.templates
+                        );
+
+
+                        /*
+                         * 현재 설정도 복원
+                         */
+
+                        if (
+                            data.currentSettings &&
+                            typeof data.currentSettings ===
+                                "object"
+                        ) {
+
+                            const restored =
+                                data.currentSettings;
+
+
+                            settings = {
+
+                                text:
+                                    typeof restored.text ===
+                                        "string"
+                                        ? restored.text
+                                        : "",
+
+                                x:
+                                    Number.isFinite(
+                                        Number(restored.x)
+                                    )
+                                        ? Number(restored.x)
+                                        : 50,
+
+                                y:
+                                    Number.isFinite(
+                                        Number(restored.y)
+                                    )
+                                        ? Number(restored.y)
+                                        : 50,
+
+                                fontSize:
+                                    Number.isFinite(
+                                        Number(
+                                            restored.fontSize
+                                        )
+                                    )
+                                        ? Number(
+                                            restored.fontSize
+                                        )
+                                        : 50,
+
+                                color:
+                                    /^#[0-9a-fA-F]{6}$/.test(
+                                        restored.color
+                                    )
+                                        ? restored.color
+                                        : "#ffffff",
+
+                                ratio:
+                                    [
+                                        "1:1",
+                                        "4:5",
+                                        "16:9"
+                                    ].includes(
+                                        restored.ratio
+                                    )
+                                        ? restored.ratio
+                                        : "1:1"
+
+                            };
+
+
+                            textInput.value =
+                                settings.text;
+
+                            previewText.textContent =
+                                settings.text;
+
+
+                            xPosition.value =
+                                settings.x;
+
+                            xValue.textContent =
+                                settings.x;
+
+
+                            yPosition.value =
+                                settings.y;
+
+                            yValue.textContent =
+                                settings.y;
+
+
+                            fontSize.value =
+                                settings.fontSize;
+
+                            fontSizeValue.textContent =
+                                settings.fontSize;
+
+
+                            textColor.value =
+                                settings.color;
+
+                            colorValue.textContent =
+                                settings.color;
+
+
+                            preview.classList.remove(
+                                "ratio-1-1",
+                                "ratio-4-5",
+                                "ratio-16-9"
+                            );
+
+
+                            preview.classList.add(
+
+                                settings.ratio ===
+                                    "4:5"
+                                    ? "ratio-4-5"
+
+                                    : settings.ratio ===
+                                        "16:9"
+                                        ? "ratio-16-9"
+
+                                        : "ratio-1-1"
+
+                            );
+
+
+                            currentRatio.textContent =
+                                settings.ratio;
+
+
+                            ratioButtons.forEach(
+                                function(button) {
+
+                                    button.classList.toggle(
+                                        "active",
+                                        button.dataset.ratio ===
+                                            settings.ratio
+                                    );
+
+                                }
+                            );
+
+
+                            updateTextPosition();
+
+                            updateTextStyle();
+
+                        }
+
+
+                        renderTemplates();
+
+
+                        alert(
+                            "JSON 복원이 완료되었습니다."
+                        );
+
+
+                    } catch (error) {
+
+                        alert(
+                            "올바른 짤·카드 스튜디오 JSON 파일이 아닙니다."
+                        );
+
+                    } finally {
+
+                        jsonImport.value = "";
+
+                    }
+
+                };
+
+
+            reader.readAsText(file);
+
+        }
+    );
+
+
+    /* =========================
+       PNG 다운로드
+    ========================= */
+
+    downloadBtn.addEventListener(
+        "click",
+        function() {
+
+            if (!currentImage) {
+
+                alert(
+                    "먼저 이미지를 업로드해주세요."
+                );
+
+                return;
+
+            }
+
+
+            const image =
+                new Image();
+
+
+            image.onload =
+                function() {
+
+                    const canvas =
+                        document.createElement(
+                            "canvas"
+                        );
+
+
+                    let width;
+
+                    let height;
+
+
+                    /*
+                     * 선택한 화면비와
+                     * 동일한 실제 출력 크기
+                     */
+
+                    if (
+                        settings.ratio === "1:1"
+                    ) {
+
+                        width = 1080;
+
+                        height = 1080;
+
+                    }
+
+                    else if (
+                        settings.ratio === "4:5"
+                    ) {
+
+                        width = 1080;
+
+                        height = 1350;
+
+                    }
+
+                    else {
+
+                        width = 1920;
+
+                        height = 1080;
+
+                    }
+
+
+                    canvas.width =
+                        width;
+
+                    canvas.height =
+                        height;
+
+
+                    const ctx =
+                        canvas.getContext(
+                            "2d"
+                        );
+
+
+                    /*
+                     * 이미지
+                     */
+
+                    ctx.drawImage(
+                        image,
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+
+
+                    /*
+                     * 글자 크기
+                     */
+
+                    const fontSizeRatio =
+                        width /
+                        preview.offsetWidth;
+
+
+                    const actualFontSize =
+                        settings.fontSize *
+                        fontSizeRatio;
+
+
+                    ctx.font =
+                        `bold ${actualFontSize}px Arial`;
+
+
+                    ctx.fillStyle =
+                        settings.color;
+
+
+                    ctx.textAlign =
+                        "center";
+
+
+                    ctx.textBaseline =
+                        "middle";
+
+
+                    /*
+                     * 글자 위치
+                     */
+
+                    const textX =
+                        width *
+                        (
+                            settings.x /
+                            100
+                        );
+
+
+                    const textY =
+                        height *
+                        (
+                            settings.y /
+                            100
+                        );
+
+
+                    /*
+                     * 그림자
+                     */
+
+                    ctx.shadowColor =
+                        "rgba(0,0,0,0.35)";
+
+                    ctx.shadowBlur = 4;
+
+                    ctx.shadowOffsetX = 2;
+
+                    ctx.shadowOffsetY = 2;
+
+
+                    /*
+                     * 텍스트
+                     */
+
+                    ctx.fillText(
+                        settings.text,
+                        textX,
+                        textY
+                    );
+
+
+                    /*
+                     * PNG 다운로드
+                     */
+
+                    const link =
+                        document.createElement(
+                            "a"
+                        );
+
+
+                    link.download =
+                        `my-card-${settings.ratio.replace(
+                            ":",
+                            "x"
+                        )}.png`;
+
+
+                    link.href =
+                        canvas.toDataURL(
+                            "image/png"
+                        );
+
+
+                    document.body.appendChild(
+                        link
+                    );
+
+
+                    link.click();
+
+
+                    link.remove();
+
+                };
+
+
+            image.onerror =
+                function() {
+
+                    alert(
+                        "이미지를 내보내는 중 오류가 발생했습니다."
+                    );
+
+                };
+
+
+            image.src =
+                currentImage;
+
+        }
+    );
+
+
+    /* =========================
+       처음 실행할 때
+    ========================= */
+
+    updateTextPosition();
+
+    updateTextStyle();
+
+    renderTemplates();
+
+</script>
+
+</body>
+</html>
